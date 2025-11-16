@@ -1,0 +1,11 @@
+torch
+torchvision
+pillow
+numpy
+pandas
+tqdm
+datasets
+jupyter
+ipykernel
+sentence_transformers
+faiss-cpu
