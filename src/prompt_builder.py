@@ -1,58 +1,89 @@
 from typing import List, Tuple
 
 class PromptBuilder:
+    """
+    Builds multimodal prompts for recipe recommendation using:
+      - Text-based evidence
+      - Image-based evidence
+      - Image → Text matches
+      - Image → Image similarities
+    """
     def __init__(self):
         pass
 
     def build_prompt(
         self,
-        claim_text: str,
-        image_id: str,
-        similar_texts: List[Tuple[str, float]],
-        similar_images: List[Tuple[str, float]],
+        query: str,
         dataset,
+        similar_texts: List[Tuple[str, float]] = None,
+        similar_images: List[Tuple[str, float]] = None,
+        similar_texts_from_image: List[Tuple[str, float]] = None,
+        similar_images_from_image: List[Tuple[str, float]] = None,
+        image_id: str = None,
     ) -> str:
         """
-        Build a structured prompt that combines evidence from text & images.
-
-        similar_texts: List of (id, score)
-        similar_images: List of (id, score)
-        dataset: used to fetch text and image info from IDs
+        Build recipe recommendation prompt using multimodal evidence.
+        
+        Args:
+        - query: Text query (e.g., "vegan curry")
+        - dataset: Fetched examples
+        - similar_texts: List of (id, score) for text→text matches
+        - similar_images: List of (id, score) for text→image matches
+        - similar_texts_from_image: List of (id, score) for image→text matches
+        - similar_images_from_image: List of (id, score) for image→image
+        - image_id: Optional image ID (if a reference image was used)
         """
 
-        # Fetch text evidence
-        text_evidence = []
-        for id_, score in similar_texts:
-            ex = dataset.get_example(int(id_))
-            text_evidence.append(f"- ({score:.3f}) {ex.text}")
+        # Build evidence sections dynamically
+        recipe_evidence_txt = "\n".join(
+            f"- (Score: {score:.3f}) {dataset.get_example(int(id_)).text[:200]}..."
+            for id_, score in (similar_texts or [])
+        ) or "*No text-based recipe matches found*"
 
-        # Add image evidence (use captions or explainers)
-        image_evidence = []
-        for id_, score in similar_images:
-            ex = dataset.get_example(int(id_))
-            # Treat the image ID or a placeholder caption as evidence
-            image_evidence.append(f"- ({score:.3f}) Image ID: {ex.id} (user can inspect separately)")
+        recipe_evidence_img = "\n".join(
+            f"- (Score: {score:.3f}) Image ID: {id_} (user image match)"
+            for id_, score in (similar_images or [])
+        ) or "*No image-based matches found*"
 
-        # Construct prompt
+        recipe_evidence_img_to_txt = "\n".join(
+            f"- (Score: {score:.3f}) {dataset.get_example(int(id_)).text[:200]}..."
+            for id_, score in (similar_texts_from_image or [])
+        ) or "*No matches found from image to recipe text*"
+
+        recipe_evidence_img_to_img = "\n".join(
+            f"- (Score: {score:.3f}) Image ID: {id_} (similar dish)"
+            for id_, score in (similar_images_from_image or [])
+        ) or "*No visually similar dish found*"
+
+        # Optional: include reference dish image ID if present
+        image_part = f"\nDish Reference Image ID: {image_id}" if image_id else ""
+
+        # Final prompt structure
         prompt = f"""
-You are an expert fact-checking AI model. A user has submitted a claim along with an image.
+You are a helpful cooking assistant. A user is seeking recipe help or suggestions.
 
-Claim:
-"{claim_text}"
+Query:
+"{query}"{image_part}
 
-Image ID: {image_id}
+Relevant recipe text evidence:
+{recipe_evidence_txt}
 
-Relevant text evidence:
-{chr(10).join(text_evidence)}
+Relevant recipe dish images:
+{recipe_evidence_img}
 
-Relevant image evidence:
-{chr(10).join(image_evidence)}
+Relevant recipes based on dish similarity (image → text):
+{recipe_evidence_img_to_txt}
 
-Based on this multimodal evidence, analyze whether the claim is:
-- True (supported)
-- False (contradicted)
-- Uncertain (not enough evidence)
+Visually similar dishes (image → image):
+{recipe_evidence_img_to_img}
 
-Provide a short explanation with your final decision.
-"""
-        return prompt.strip()
+Based on this multimodal evidence, suggest:
+- The top 2–3 recipes that best match the query (from the evidence)
+- Their ingredients
+- Why they are a good match
+- Any variations or customization ideas (dietary preferences, ingredients availability)
+
+Give your answer in a clear, friendly, and enthusiastic tone.
+        """.strip()
+
+        return prompt

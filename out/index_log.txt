@@ -1,0 +1,11 @@
+[INFO] Starting FAISS index build.
+[INFO] SBERT text embeddings shape=(2, 768), dim=768
+[INFO] CLIP text embeddings  shape=(2, 512), dim=512
+[INFO] Image embeddings      shape=(2, 512), dim=512
+[INFO] Adding vectors to indexes...
+
+[OK] FAISS indexes saved:
+  indexes/sbert_text.index
+  indexes/clip_text.index
+  indexes/image.index
+[INFO] Index build complete.

@@ -1,0 +1,53 @@
+You are a helpful cooking assistant. A user is seeking recipe help or suggestions.
+
+Query:
+"Popular Indian street food recipes"
+
+Relevant recipe text evidence:
+- (Score: 0.666) Ingredients:
+['2 tbsp vegetable oil, plus extra if needed', '1 pack paneer, around 8 oz, cut into large bite-size pieces', '20 fresh curry leaves (optional)', '2 tsp black mustard seeds', '1 tsp cumin...
+- (Score: 0.651) Ingredients:
+['1/2 lb white boiling potatoes', '3/4 cup finely chopped onion', '1 1/2 lb firm-ripe tomatoes, cut into 1/4-inch dice (1 1/4 cups), then drained in a sieve about 20 minutes', '1 (1-lb) u...
+- (Score: 0.641) Ingredients:
+['6 scallions, thinly sliced', '1 (1") piece ginger, scrubbed, cut into matchsticks', '2 garlic cloves, thinly sliced', '1 tsp. coriander seeds', '1 tsp. cumin seeds', '½ tsp. black musta...
+- (Score: 0.640) Ingredients:
+["Indian cheese (paneer) made with 8 cups milk (see tips, below) or 8 ounces farmer's cheese or 2 cakes tofu, sliced as paneer", '2 cups cooked spinach', '1 sweet green pepper, cored and ...
+- (Score: 0.640) Ingredients:
+['2 tablespoons vegetable oil', '1/3 cup minced green onions (about 3)', '1 tablespoon minced peeled fresh ginger', '2 garlic cloves, minced', '2 tablespoons Thai red curry paste', '3/4 c...
+
+Relevant recipe dish images:
+- (Score: 0.311) Image ID: 11621 (user image match)
+- (Score: 0.302) Image ID: 6654 (user image match)
+- (Score: 0.300) Image ID: 11878 (user image match)
+- (Score: 0.299) Image ID: 8800 (user image match)
+- (Score: 0.293) Image ID: 1681 (user image match)
+
+Relevant recipes based on dish similarity (image → text):
+- (Score: 0.362) Ingredients:
+['1 Tbsp. crushed red pepper flakes', '1 Tbsp. whole black peppercorns', '1 Tbsp. fennel seeds', '4 lb. boneless pork shoulder, fat cap trimmed to 1/4"', '2 Tbsp. kosher salt', '4 Tbsp. e...
+- (Score: 0.353) Ingredients:
+['2 (15-ounce) cans chickpeas, drained, rinsed, patted dry', '2 tablespoons olive oil', '2 teaspoons curry powder', '1 teaspoon kosher salt']
+
+Instructions:
+Preheat oven to 425°F. Toss ch...
+- (Score: 0.352) Ingredients:
+['1/2 pound (1 generous cup) dried chickpeas', '7 cloves garlic, peeled', '1 onion, peeled', '1 bay leaf', '1 small ham hock (optional)', 'Salt', 'About 1 1/4 pounds spinach, tough stems ...
+- (Score: 0.350) Ingredients:
+['3/4 cup dried chickpeas', '5 garlic cloves (2 whole, 3 chopped)', '1 large cinnamon stick, broken in half', '2 tablespoons olive oil', '3 pounds 1" cubes lamb shoulder', 'Kosher salt an...
+- (Score: 0.347) Ingredients:
+['2 Tbsp. extra-virgin olive oil, plus more for drizzling', '4 bone-in lamb shoulder chops (about 1 1/2 lb.)', '1 tsp. freshly ground black pepper', '2 tsp. kosher salt, divided', '1 smal...
+
+Visually similar dishes (image → image):
+- (Score: 1.000) Image ID: 11621 (similar dish)
+- (Score: 0.865) Image ID: 12368 (similar dish)
+- (Score: 0.864) Image ID: 1237 (similar dish)
+- (Score: 0.857) Image ID: 9125 (similar dish)
+- (Score: 0.855) Image ID: 2061 (similar dish)
+
+Based on this multimodal evidence, suggest:
+- The top 2–3 recipes that best match the query (from the evidence)
+- Their ingredients
+- Why they are a good match
+- Any variations or customization ideas (dietary preferences, ingredients availability)
+
+Give your answer in a clear, friendly, and enthusiastic tone.

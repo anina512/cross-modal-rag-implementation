@@ -1,0 +1,8 @@
+[INFO] Loaded 13471 recipe examples with images.
+[INFO] Generating embeddings...
+[WARN] SKIPPED ID=11193 | Reason: object of type 'float' has no len()
+[WARN] SKIPPED ID=12343 | Reason: object of type 'float' has no len()
+[WARN] SKIPPED ID=12348 | Reason: object of type 'float' has no len()
+[WARN] SKIPPED ID=12788 | Reason: object of type 'float' has no len()
+[WARN] SKIPPED ID=12799 | Reason: object of type 'float' has no len()
+[OK] Saved embeddings.

@@ -3,58 +3,66 @@ import numpy as np
 from tqdm import tqdm
 from PIL import Image
 
-from src.data_loader import load_fakeddit_9k
+from src.data_loader import load_recipe_dataset
 from src.embedder import Embedder
 
 
 def main():
-    # Load from cached CSV instead of fresh HuggingFace load
-    dataset = load_fakeddit_9k(
-        split="train",
-        image_root="data/images",
-        download_images=False,  # Use cache
+    os.makedirs("out", exist_ok=True)
+    os.makedirs("embeddings", exist_ok=True)
+
+    # Load recipe dataset, subset for now
+    dataset = load_recipe_dataset(
+        csv_path="data/Food Ingredients and Recipe Dataset with Image Name Mapping.csv",
+        image_dir="data/Food Images/Food Images",
     )
 
-    print(f"[INFO] Dataset size for embedding: {len(dataset)}")
-    if len(dataset) == 0:
-        raise RuntimeError("Dataset is empty. Did you generate the cache?")
+    log_path = "out/embeddings_log.txt"
+    log_file = open(log_path, "w", encoding="utf-8")
 
-    embedder = Embedder()  # auto-selects cuda if available
+    log_file.write(f"[INFO] Loaded {len(dataset)} recipe examples with images.\n")
 
-    text_embeddings = []
-    image_embeddings = []
+    embedder = Embedder()
+
+    sbert_text_embs = []
+    clip_text_embs = []
+    image_embs = []
     ids = []
 
-    for ex in tqdm(dataset.iter_examples(), total=len(dataset)):
-        try:
-            txt_emb = embedder.encode_text(ex.text)
+    log_file.write("[INFO] Generating embeddings...\n")
 
+    for idx, ex in tqdm(enumerate(dataset.iter_examples()), total=len(dataset)):
+        try:
+            # SBERT text embedding from merged text
+            sbert_emb = embedder.encode_text_sbert(ex.text)
+
+            # CLIP text embedding from title
+            clip_text_emb = embedder.encode_text_clip(ex.title)
+
+            # CLIP image embedding
             img = Image.open(ex.image_path).convert("RGB")
             img_emb = embedder.encode_image(img)
 
-            text_embeddings.append(txt_emb)
-            image_embeddings.append(img_emb)
+            sbert_text_embs.append(sbert_emb)
+            clip_text_embs.append(clip_text_emb)
+            image_embs.append(img_emb)
             ids.append(ex.id)
 
         except Exception as e:
-            print(f"[WARN] Skipping ID={ex.id} due to error: {e}")
+            log_file.write(f"[WARN] SKIPPED ID={ex.id} | Reason: {e}\n")
 
-    if not text_embeddings or not image_embeddings:
-        raise RuntimeError("No embeddings were generated. Check image paths or embedding code.")
+    if not sbert_text_embs or not clip_text_embs or not image_embs:
+        log_file.write("[ERROR] No embeddings generated.")
+        return
 
-    text_embeddings = np.stack(text_embeddings)
-    image_embeddings = np.stack(image_embeddings)
-    ids = np.array(ids)
+    np.save("embeddings/sbert_text_embs.npy", np.stack(sbert_text_embs))
+    np.save("embeddings/clip_text_embs.npy", np.stack(clip_text_embs))
+    np.save("embeddings/image_embs.npy", np.stack(image_embs))
+    np.save("embeddings/ids.npy", np.array(ids))
 
-    os.makedirs("embeddings", exist_ok=True)
-    np.save("embeddings/text_embs.npy", text_embeddings)
-    np.save("embeddings/image_embs.npy", image_embeddings)
-    np.save("embeddings/ids.npy", ids)
-
-    print("[OK] Saved:")
-    print(f"  embeddings/text_embs.npy shape={text_embeddings.shape}")
-    print(f"  embeddings/image_embs.npy shape={image_embeddings.shape}")
-    print(f"  embeddings/ids.npy        shape={ids.shape}")
+    log_file.write("[OK] Saved embeddings.\n")
+    log_file.close()
+    print(f"[OK] Embeddings saved. Log at {log_path}")
 
 
 if __name__ == "__main__":
